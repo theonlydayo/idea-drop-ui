@@ -6,6 +6,7 @@ import {
   queryOptions,
 } from '@tanstack/react-query';
 import { fetchIdea, updateIdea } from '@/api/ideas';
+import { ArrowLeft, Pencil } from 'lucide-react';
 
 const ideaQueryOptions = (id: string) =>
   queryOptions({
@@ -52,96 +53,135 @@ function IdeaEditPage() {
   };
 
   return (
-    <div className='space-y-4'>
-      <div className='flex justify-between items-center mb-4'>
-        <h1 className='text-2xl font-bold'>Edit Idea</h1>
+    <div className='min-h-[calc(100vh-5rem)] bg-[#f5f7f8]'>
+      <div className='mx-auto max-w-4xl px-6 py-10 lg:py-14'>
         <Link
           to='/ideas/$ideaId'
           params={{ ideaId }}
-          className='text-sm text-blue-600 hover:underline'
+          className='group mb-10 inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-gray-950'
         >
-          ← Back To Idea
+          <ArrowLeft className='h-4 w-4 transition-transform group-hover:-translate-x-1' />
+          Back to idea
         </Link>
+
+        <div className='mb-10'>
+          <div className='mb-5 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600'>
+            <Pencil className='h-4 w-4' />
+            Edit idea
+          </div>
+
+          <h1 className='text-4xl font-semibold tracking-tight text-gray-950 sm:text-5xl'>
+            Refine your idea
+          </h1>
+
+          <p className='mt-4 max-w-2xl text-base leading-7 text-gray-500'>
+            Update your idea details and make sure everything accurately
+            represents what you want to share with the community.
+          </p>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className='rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm sm:p-9 lg:p-10'
+        >
+          <div className='space-y-7'>
+            <div>
+              <label
+                htmlFor='title'
+                className='mb-2 block text-sm font-semibold text-gray-800'
+              >
+                Idea title
+              </label>
+
+              <input
+                id='title'
+                type='text'
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className='h-14 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10'
+                placeholder='Give your idea a clear title'
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor='summary'
+                className='mb-2 block text-sm font-semibold text-gray-800'
+              >
+                Summary
+              </label>
+
+              <input
+                id='summary'
+                type='text'
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                className='h-14 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10'
+                placeholder='Describe your idea in one sentence'
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor='body'
+                className='mb-2 block text-sm font-semibold text-gray-800'
+              >
+                Description
+              </label>
+
+              <textarea
+                id='body'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={9}
+                className='w-full resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-4 text-sm leading-7 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10'
+                placeholder='Tell the community more about your idea...'
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor='tags'
+                className='mb-2 block text-sm font-semibold text-gray-800'
+              >
+                Tags
+              </label>
+
+              <input
+                id='tags'
+                type='text'
+                value={tagsInput}
+                onChange={(e) => setTagsInput(e.target.value)}
+                className='h-14 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10'
+                placeholder='startup, productivity, technology'
+              />
+
+              <p className='mt-2 text-xs text-gray-400'>
+                Separate multiple tags with commas.
+              </p>
+            </div>
+          </div>
+
+          <div className='mt-10 flex flex-col gap-4 border-t border-gray-100 pt-7 sm:flex-row sm:items-center sm:justify-between'>
+            <Link
+              to='/ideas/$ideaId'
+              params={{ ideaId }}
+              className='text-center text-sm font-medium text-gray-500 transition hover:text-gray-900 sm:text-left'
+            >
+              Cancel
+            </Link>
+
+            <button
+              type='submit'
+              disabled={isPending}
+              className='inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gray-950 px-8 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
+            >
+              <Pencil className='h-4 w-4' />
+              {isPending ? 'Updating...' : 'Update idea'}
+            </button>
+          </div>
+        </form>
       </div>
-      <form onSubmit={handleSubmit} className='space-y-2'>
-        <div>
-          <label
-            htmlFor='title'
-            className='block text-gray-700 font-medium mb-1'
-          >
-            Title
-          </label>
-          <input
-            id='title'
-            type='text'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className='w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
-            placeholder='Enter idea title'
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor='summary'
-            className='block text-gray-700 font-medium mb-1'
-          >
-            Summary
-          </label>
-          <input
-            id='summary'
-            type='text'
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-            className='w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
-            placeholder='Enter idea summary'
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor='body'
-            className='block text-gray-700 font-medium mb-1'
-          >
-            Description
-          </label>
-          <textarea
-            id='body'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={6}
-            className='w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
-            placeholder='Write out the description of your idea'
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor='tags'
-            className='block text-gray-700 font-medium mb-1'
-          >
-            Tags
-          </label>
-          <input
-            id='tags'
-            type='text'
-            value={tagsInput}
-            onChange={(e) => setTagsInput(e.target.value)}
-            className='w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
-            placeholder='optional tags, comma separated'
-          />
-        </div>
-
-        <div className='mt-5'>
-          <button
-            type='submit'
-            disabled={isPending}
-            className='block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed'
-          >
-            {isPending ? 'Updating...' : 'Update Idea'}
-          </button>
-        </div>
-      </form>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import type { Idea } from '@/types';
 import { Link } from '@tanstack/react-router';
+import { Lightbulb } from 'lucide-react';
 import clsx from 'clsx';
 
 const IdeaCard = ({
@@ -9,17 +10,44 @@ const IdeaCard = ({
   idea: Idea;
   button?: boolean;
 }) => {
-  const linkClasses = clsx({
-    'text-blue-600 hover:underline mt-3': !button,
-    'text-center mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hove:bg-blue-700 transition':
-      button,
-  });
+  const linkClasses = clsx(
+    'mt-7 inline-flex items-center text-sm font-semibold transition',
+    {
+      'h-11 justify-center rounded-xl bg-gray-950 px-5 text-white hover:bg-blue-600':
+        button,
+      'text-gray-900 hover:text-blue-600': !button,
+    }
+  );
 
   return (
-    <div className='border border-gray-300 p-4 rounded shadow bg-white flex flex-col justify-between'>
+    <article className='group flex min-h-[270px] flex-col justify-between rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl'>
       <div>
-        <h2 className='text-lg font-semibold'>{idea.title}</h2>
-        <p className='text-gray-700 mt-2'>{idea.summary}</p>
+        <div className='mb-6 flex items-start'>
+          <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-yellow-50'>
+            <Lightbulb className='h-5 w-5 text-yellow-500' />
+          </div>
+        </div>
+
+        <h2 className='text-xl font-semibold leading-7 tracking-tight text-gray-950'>
+          {idea.title}
+        </h2>
+
+        <p className='mt-3 line-clamp-3 text-sm leading-6 text-gray-500'>
+          {idea.summary}
+        </p>
+
+        {idea.tags && idea.tags.length > 0 && (
+          <div className='mt-5 flex flex-wrap gap-2'>
+            {idea.tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className='rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600'
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <Link
@@ -27,9 +55,9 @@ const IdeaCard = ({
         params={{ ideaId: idea._id.toString() }}
         className={linkClasses}
       >
-        {button ? 'View Idea' : 'Read More →'}
+        {button ? 'View idea' : 'Read more'}
       </Link>
-    </div>
+    </article>
   );
 };
 

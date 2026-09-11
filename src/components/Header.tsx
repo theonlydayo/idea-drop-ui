@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { logoutUser } from '@/api/auth';
 
@@ -19,62 +19,81 @@ const Header = () => {
   };
 
   return (
-    <header className='bg-white shadow'>
-      <div className='container mx-auto px-6 py-4 flex justify-between items-center'>
-        <div className='flex items-center space-x-2 text-gray-800'>
-          <Link to='/' className='flex items-center space-x-2 text-gray-800'>
-            <Lightbulb className='w-6 h-6 text-yellow-500' />
-            <h1 className='text-2xl font-bold'>IdeaDrop</h1>
-          </Link>
-        </div>
+    <header className='border-b border-gray-100 bg-white'>
+      <div className='mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10'>
+        <Link
+          to='/'
+          className='flex items-center gap-3 text-gray-950 transition-opacity hover:opacity-80'
+        >
+          <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-100'>
+            <Lightbulb className='h-5 w-5 text-yellow-500' />
+          </div>
 
-        <nav className='flex items-center space-x-4'>
-          <Link
-            to='/ideas'
-            className='text-gray-600 hover:text-gray-900 font-medium transition px-3 py-2 leading-none'
-          >
-            Ideas
-          </Link>
-          {user && (
+          <span className='text-xl font-bold tracking-tight'>IdeaDrop</span>
+        </Link>
+
+        <div className='flex items-center gap-8'>
+          <nav className='hidden items-center gap-2 sm:flex'>
             <Link
-              to='/ideas/new'
-              className='bg-blue-600 hover:bg-blue-700 text-white font-medium transition px-4 py-2 rounded-md leading-none'
+              to='/ideas'
+              className='rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-950'
             >
-              + New Idea
+              Ideas
             </Link>
-          )}
-        </nav>
 
-        {/* Auth Buttons */}
-        <div className='flex items-center space-x-2'>
-          {!user ? (
-            <>
+            {user && (
               <Link
-                to='/login'
-                className='text-gray-600 hover:text-gray-700 font-medium transition px-3 py-2 leading-none'
+                to='/ideas/new'
+                className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700'
               >
-                Login
+                + New Idea
               </Link>
-              <Link
-                to='/register'
-                className='bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium transition px-4 py-2 rounded-md leading-none'
-              >
-                Register
-              </Link>
-            </>
-          ) : (
-            <>
-              <span className='hidden sm:block text-gray-700 font-medium px-2'>
-                Welcome, {user.name}
-              </span>
-              <button
-                onClick={handleLogout}
-                className='text-red-600 hover:text-red-900 font-medium transition px-3 py-2 leading-none'
-              >
-                Logout
-              </button>
-            </>
-          )}
+            )}
+          </nav>
+
+          <div className='flex items-center gap-4 border-l border-gray-100 pl-6'>
+            {!user ? (
+              <>
+                <Link
+                  to='/login'
+                  className='rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-950'
+                >
+                  Login
+                </Link>
+
+                <Link
+                  to='/register'
+                  className='rounded-lg bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600'
+                >
+                  Register
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className='flex items-center gap-3'>
+                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600'>
+                    {user.name?.charAt(0).toUpperCase()}
+                  </div>
+
+                  <div className='hidden leading-tight md:block'>
+                    <p className='text-sm font-semibold text-gray-900'>
+                      {user.name}
+                    </p>
+
+                    <p className='text-xs text-gray-400'>IdeaDrop member</p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className='flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition hover:bg-red-50 hover:text-red-600'
+                >
+                  <LogOut className='h-4 w-4' />
+                  <span className='hidden sm:inline'>Logout</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

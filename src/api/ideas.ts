@@ -18,12 +18,12 @@ export const createIdea = async (newIdea: {
   summary: string;
   description: string;
   tags: string[];
+  image?: string;
 }): Promise<Idea> => {
   const res = await api.post('/ideas', {
     ...newIdea,
     createdAt: new Date().toISOString(),
   });
-
   return res.data;
 };
 
@@ -38,6 +38,7 @@ export const updateIdea = async (
     summary: string;
     description: string;
     tags: string[];
+    image?: string;
   }
 ): Promise<Idea> => {
   const res = await api.put(`/ideas/${ideaId}`, updatedData);

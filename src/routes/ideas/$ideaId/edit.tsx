@@ -6,7 +6,8 @@ import {
   queryOptions,
 } from '@tanstack/react-query';
 import { fetchIdea, updateIdea } from '@/api/ideas';
-import { ArrowLeft, Pencil } from 'lucide-react';
+import { uploadImage } from '@/api/cloudinary';
+import { ArrowLeft, ImagePlus, Pencil, X } from 'lucide-react';
 
 const ideaQueryOptions = (id: string) =>
   queryOptions({
@@ -31,9 +32,18 @@ function IdeaEditPage() {
   const [description, setDescription] = useState(idea.description);
   const [tagsInput, setTagsInput] = useState(idea.tags.join(', '));
 
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState(idea.image || '');
+
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: () =>
-      updateIdea(ideaId, {
+    mutationFn: async () => {
+      let imageUrl = idea.image;
+
+      if (image) {
+        imageUrl = await uploadImage(image);
+      }
+
+      return updateIdea(ideaId, {
         title,
         summary,
         description,
@@ -41,15 +51,50 @@ function IdeaEditPage() {
           .split(',')
           .map((t) => t.trim())
           .filter(Boolean),
-      }),
+        image: imageUrl,
+      });
+    },
     onSuccess: () => {
-      navigate({ to: '/ideas/$ideaId', params: { ideaId } });
+      navigate({
+        to: '/ideas/$ideaId',
+        params: { ideaId },
+      });
     },
   });
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be smaller than 5MB.');
+      return;
+    }
+
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const removeImage = () => {
+    setImage(null);
+    setImagePreview('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await mutateAsync();
+
+    try {
+      await mutateAsync();
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong while updating your idea.');
+    }
   };
 
   return (
@@ -159,6 +204,59 @@ function IdeaEditPage() {
               <p className='mt-2 text-xs text-gray-400'>
                 Separate multiple tags with commas.
               </p>
+            </div>
+
+            <div>
+              <label
+                htmlFor='image'
+                className='mb-2 block text-sm font-semibold text-gray-800'
+              >
+                Idea image
+              </label>
+
+              {!imagePreview ? (
+                <label
+                  htmlFor='image'
+                  className='flex min-h-48 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 py-8 text-center transition hover:border-blue-300 hover:bg-blue-50/40'
+                >
+                  <div className='mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm'>
+                    <ImagePlus className='h-5 w-5 text-blue-600' />
+                  </div>
+
+                  <p className='text-sm font-semibold text-gray-800'>
+                    Upload an image
+                  </p>
+
+                  <p className='mt-1 text-xs text-gray-400'>
+                    JPG, PNG or WebP · Max 5MB
+                  </p>
+
+                  <input
+                    id='image'
+                    type='file'
+                    accept='image/jpeg,image/png,image/webp'
+                    onChange={handleImageChange}
+                    className='hidden'
+                  />
+                </label>
+              ) : (
+                <div className='relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50'>
+                  <img
+                    src={imagePreview}
+                    alt='Idea preview'
+                    className='h-72 w-full object-cover'
+                  />
+
+                  <button
+                    type='button'
+                    onClick={removeImage}
+                    className='absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white transition hover:bg-black'
+                    aria-label='Remove image'
+                  >
+                    <X className='h-4 w-4' />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

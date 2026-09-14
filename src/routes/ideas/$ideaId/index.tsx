@@ -62,63 +62,75 @@ function IdeaDetailsPage() {
           Back to ideas
         </Link>
 
-        <article className='rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm sm:p-10 lg:p-12'>
-          <header>
-            <div className='mb-6 inline-flex items-center gap-2 rounded-full border border-yellow-100 bg-yellow-50 px-4 py-2 text-sm font-medium text-yellow-600'>
-              <Lightbulb className='h-4 w-4' />
-              Idea
+        <article className='overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-sm'>
+          {idea.image && (
+            <div className='h-72 w-full overflow-hidden bg-gray-100 sm:h-96'>
+              <img
+                src={idea.image}
+                alt={idea.title}
+                className='h-full w-full object-cover'
+              />
             </div>
+          )}
 
-            <h1 className='text-4xl font-semibold leading-[1.1] tracking-tight text-gray-950 sm:text-5xl'>
-              {idea.title}
-            </h1>
+          <div className='p-7 sm:p-10 lg:p-12'>
+            <header>
+              <div className='mb-6 inline-flex items-center gap-2 rounded-full border border-yellow-100 bg-yellow-50 px-4 py-2 text-sm font-medium text-yellow-600'>
+                <Lightbulb className='h-4 w-4' />
+                Idea
+              </div>
 
-            <p className='mt-6 max-w-3xl text-lg leading-8 text-gray-500'>
-              {idea.summary}
-            </p>
+              <h1 className='text-4xl font-semibold leading-[1.1] tracking-tight text-gray-950 sm:text-5xl'>
+                {idea.title}
+              </h1>
 
-            <div className='mt-7 flex items-center gap-2 text-sm text-gray-400'>
-              <CalendarDays className='h-4 w-4' />
-              <span>
-                Created {new Date(idea.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-          </header>
-
-          <div className='my-10 h-px bg-gray-100' />
-
-          <section>
-            <div className='mb-6 flex items-center gap-3'>
-              <div className='h-1 w-8 rounded-full bg-blue-600' />
-
-              <h2 className='text-sm font-semibold uppercase tracking-widest text-gray-400'>
-                About this idea
-              </h2>
-            </div>
-
-            <p className='whitespace-pre-line text-base leading-8 text-gray-600 sm:text-lg sm:leading-9'>
-              {idea.description}
-            </p>
-          </section>
-
-          {idea.tags && idea.tags.length > 0 && (
-            <section className='mt-12 border-t border-gray-100 pt-8'>
-              <p className='mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400'>
-                Topics
+              <p className='mt-6 max-w-3xl text-lg leading-8 text-gray-500'>
+                {idea.summary}
               </p>
 
-              <div className='flex flex-wrap gap-2'>
-                {idea.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className='rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600'
-                  >
-                    #{tag}
-                  </span>
-                ))}
+              <div className='mt-7 flex items-center gap-2 text-sm text-gray-400'>
+                <CalendarDays className='h-4 w-4' />
+                <span>
+                  Created {new Date(idea.createdAt).toLocaleDateString()}
+                </span>
               </div>
+            </header>
+
+            <div className='my-10 h-px bg-gray-100' />
+
+            <section>
+              <div className='mb-6 flex items-center gap-3'>
+                <div className='h-1 w-8 rounded-full bg-blue-600' />
+
+                <h2 className='text-sm font-semibold uppercase tracking-widest text-gray-400'>
+                  About this idea
+                </h2>
+              </div>
+
+              <p className='whitespace-pre-line text-base leading-8 text-gray-600 sm:text-lg sm:leading-9'>
+                {idea.description}
+              </p>
             </section>
-          )}
+
+            {idea.tags && idea.tags.length > 0 && (
+              <section className='mt-12 border-t border-gray-100 pt-8'>
+                <p className='mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400'>
+                  Topics
+                </p>
+
+                <div className='flex flex-wrap gap-2'>
+                  {idea.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className='rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600'
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
         </article>
 
         {user && user.id === idea.user && (

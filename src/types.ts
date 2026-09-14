@@ -6,4 +6,5 @@ export type Idea = {
   tags: string[];
   createdAt: string;
   user: string;
+  image?: string;
 };
